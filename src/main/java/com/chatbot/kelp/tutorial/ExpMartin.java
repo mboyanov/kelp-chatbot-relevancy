@@ -45,10 +45,13 @@ public class ExpMartin {
 	public static final String treeRepresentation = "tree";
 
 	public static void main(String[] args) throws Exception {
-		if(args.length!=2){
-			System.out.println("EXPECTED 2 ARGUMENTS:");
+		if(args.length != 5){
+			System.out.println("EXPECTED 5 ARGUMENTS:");
 			System.out.println("1) prediction file outputh");
-			System.out.println("2) C");
+            System.out.println("2) C");
+            System.out.println("3) path to train set");
+            System.out.println("4) path to dev set");
+            System.out.println("5) path to test set");
 			System.exit(0);
 		}
 		long start = System.currentTimeMillis();
@@ -64,13 +67,18 @@ public class ExpMartin {
 		 * LOADING DATASETS
 		 */
 
+		/*
+		 * LOADING DATASETS
+		 */
+        String trainsetFile = args[2];
+        String devsetFile = args[3];
+        String testsetFile = args[4];
 		SimpleDataset trainset = new SimpleDataset();
-		
-		trainset.populate("v3-SemEval2016-Task3-CQA-QL-train-part1-with-multiline-with-bot.xml.taskA.klp");
+		trainset.populate(trainsetFile);
 		SimpleDataset devset = new SimpleDataset();
-		devset.populate("v3-SemEval2016-Task3-CQA-QL-dev-with-multiline-with-bot.xml.taskA.klp");
+		devset.populate(devsetFile);
 		SimpleDataset testset = new SimpleDataset();
-		testset.populate("v3-SemEval2016-Task3-CQA-QL-test-with-multiline-with-bot.xml.taskA.klp");
+		testset.populate(testsetFile);
 		
 		
 		SimpleDataset completeDataset = new SimpleDataset();
