@@ -45,13 +45,14 @@ public class ExpMartin {
 	public static final String treeRepresentation = "tree";
 
 	public static void main(String[] args) throws Exception {
-		if(args.length != 5){
+		if(args.length < 5){
 			System.out.println("EXPECTED 5 ARGUMENTS:");
 			System.out.println("1) prediction file outputh");
             System.out.println("2) C");
             System.out.println("3) path to train set");
             System.out.println("4) path to dev set");
             System.out.println("5) path to test set");
+            System.out.println("6))(optional) cache size - defaults to size(train_set+dev_set+test_set)");
 			System.exit(0);
 		}
 		long start = System.currentTimeMillis();
@@ -75,6 +76,7 @@ public class ExpMartin {
         String testsetFile = args[4];
 		SimpleDataset trainset = new SimpleDataset();
 		trainset.populate(trainsetFile);
+		
 		SimpleDataset devset = new SimpleDataset();
 		devset.populate(devsetFile);
 		SimpleDataset testset = new SimpleDataset();
@@ -131,7 +133,9 @@ public class ExpMartin {
 		PartialTreeKernel ptk = new PartialTreeKernel(0.4f, 0.4f, 1, "tree");
 		// ptk.setDeltaMatrix(new DynamicDeltaMatrix());
 		//ptk.setMaxSubseqLeng(5);
-		int cacheSize = trainset.getNumberOfExamples() + devset.getNumberOfExamples() + testset.getNumberOfExamples();
+		int cacheSize = getCacheSize(args, trainset, devset, testset);
+		
+		
 		ptk.setSquaredNormCache(new DynamicIndexSquaredNormCache(cacheSize * 2));
 
 		NormalizationKernel normKernel = new NormalizationKernel(ptk);
@@ -170,6 +174,13 @@ public class ExpMartin {
 		evaluateSet(args[0], "dev", devset, label, classifier);
 		evaluateSet(args[0], "test", testset, label, classifier);
 		System.out.println("time: " + Long.toString(System.currentTimeMillis() - start));
+	}
+
+	private static int getCacheSize(String[] args, SimpleDataset trainset, SimpleDataset devset, SimpleDataset testset) {
+		if (args.length>5) {
+			return Integer.parseInt(args[5]);
+		}
+		return trainset.getNumberOfExamples() + devset.getNumberOfExamples() + testset.getNumberOfExamples();
 	}
 
 	private static void evaluateSet(String classifierName, String datasetType, SimpleDataset dataset,
